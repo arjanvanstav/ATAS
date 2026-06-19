@@ -5,6 +5,9 @@
 # Pdf's take a lot of unnessicary space. Compile them from the .typ file.
 *.pdf
 
+# Scratch/experimental code, not part of the package
+Project-Overview/Testing_stuff/
+
 # The execution binary for creating UML with plantuml
 *.jar
 

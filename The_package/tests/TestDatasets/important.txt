@@ -1,0 +1,1 @@
+You have to put testing datasets in this folder under the names: test.csv, and test.gpkg

@@ -1,0 +1,148 @@
+@startuml class UML
+
+''''''''''''''''''''''''''''''''''''''
+'''''' Defining all classes ''''''''''
+''''''''''''''''''''''''''''''''''''''
+
+' On initialization
+entity CBS {
+    *gwb_code <<primary_key>>
+    *regio <<names>>
+    *recs <<Land | Gemeente | Wijk | Buurt>>
+    *geom <<borders>>
+    demographic_info
+}
+
+' For data-analysis on the nodes of a large OSMnx graph
+entity Graph_nodes {
+    *node_id <<primary_key>>
+    *street_count
+    *loc <<POINT>>
+    neighborhood <<performance>>
+    node_info
+}
+
+entity Graph_edges {
+    *edge_id <<primary_key>>
+    *node1
+    *node2
+    *length
+    edge_info
+}
+
+' Graph nodes that are accessible by the pedestrian network
+entity Graph_nodes_accessible {
+    *node_id <<primary_key>>
+    *street_count
+    *loc <<POINT>>
+    neighborhood <<performance>>
+    node_info
+}
+
+' Bus_stations (features) linked to nodes with feature location
+entity Bus_stations {
+    *feature_id <<primary_key>>
+    *node_id <<primary_key>>
+    *location
+}
+
+' The calculated result of the to-move Bus-stations
+entity Bus_stations_to_move {
+    *feature_id
+    *old_node
+    *new_node
+    *old_loc
+    *new_loc
+}
+
+' The 5 points representing a neighborhood. Every point is a single column to
+' allow customizable number of points per neighborhood.
+entity Neighborhood_pts {
+    *gwb_code <<primary_key>>
+    *id <<primary_key>>
+    *pt <<POINT>>
+}
+
+' Cleaned version of CBS after pre-processing.
+' Contains only needed columns with some (partially) processed data.
+' Only rec='Buurt'
+' Population density
+' Amenity density
+' Only essential demographic_info
+entity Neighborhood {
+    *gwb_code <<primary_key>>
+    *regio <<names>>
+    *geom <<borders>>
+    demographic_info
+}
+
+entity Features {
+    *id,
+    *element,
+    *loc,
+    public_transit_info
+    amenity_info
+}
+
+entity GTFS_stop {
+    *stop_id <<primary_key>>
+    *loc <<POINT>>
+    stop_name
+}
+
+entity GTFS_route {
+    *route_id <<primary_key>>
+    route_type <<bus | tram | metro | train>>
+}
+
+entity GTFS_trip {
+    *trip_id <<primary_key>>
+    route_id
+    service_id
+}
+
+entity GTFS_stop_time {
+    *trip_id
+    *stop_id
+    arrival_time
+    departure_time
+    stop_sequence
+}
+
+
+''''''''''''''''''''''''''''''''''''''
+'''''' Defining relations ''''''''''''
+''''''''''''''''''''''''''''''''''''''
+
+CBS ||--|| Neighborhood : subset
+CBS::gwb_code |o--o{  Neighborhood_pts::gwb_code
+Neighborhood::gwb_code |o--o{  Neighborhood_pts::gwb_code
+
+CBS::geom ||--o{ Graph_nodes::zone
+Neighborhood::geom ||--o{ Graph_nodes::zone
+
+Graph_edges::node1 ||--|| Graph_nodes::node_id
+Graph_edges::node2 ||--|| Graph_nodes::node_id
+
+
+GTFS_route ||--o{ GTFS_trip
+GTFS_trip ||--o{ GTFS_stop_time
+GTFS_stop ||--o{ GTFS_stop_time
+
+GTFS_trip ||--o{ GTFS_frequency
+
+Neighborhood_pts }o--o{ GTFS_stop : nearest
+
+Bus_stations::feature_id ||--|| Features::id
+Bus_stations::node_id ||--|| Graph_nodes::node_id
+Bus_stations::location ||--|| Features::loc
+
+Bus_stations_to_move::feature_id ||--|| Features::id
+Bus_stations_to_move::old_node ||--|| Graph_nodes::node_id
+Bus_stations_to_move::new_node ||--|| Graph_nodes::node_id
+Bus_stations_to_move::old_loc ||--|| Features::loc
+Bus_stations_to_move::new_loc ||--|| Features::loc
+
+Graph_nodes_accessible::node_id ||--|| Graph_nodes:node_id : subset
+
+@enduml

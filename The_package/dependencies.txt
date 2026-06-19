@@ -1,0 +1,20 @@
+# Python packages — install with: pip install <package>
+duckdb
+duckdb-extension-spatial
+osmnx
+geopandas
+pyarrow          # conversion between geopandas and duckdb
+pytest           # testing
+scipy            # default functions (Poisson disk sampling, etc.)
+requests         # HTTP downloads in data_manager
+r5py             # transit routing (Java backend — see README for Java version)
+
+# System packages — NOT installable via pip
+#
+# osmium-tool   — clips city OSM extracts from province files
+#   macOS:  brew install osmium-tool
+#   Ubuntu: sudo apt install osmium-tool
+#
+# Java 17 or 21 LTS   — required by r5py; Java 26+ crashes on Apple Silicon
+#   macOS:  brew install --cask temurin@21
+#   Ubuntu: sudo apt install temurin-21-jdk

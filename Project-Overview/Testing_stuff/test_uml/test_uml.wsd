@@ -1,0 +1,30 @@
+@startuml test
+
+class class1 {
+    int item1
+    string item2
+    float item3
+    void method1()
+    int method2()
+}
+
+class class2 {
+    class items
+    int method()
+}
+
+protocol main
+
+class items {
+    lst list
+    int size()
+}
+
+' Implementation relation
+main <|.. class1
+' Dependency relation
+class1 <|-- class2
+' Uses another object relation
+class2::items --> items
+
+@enduml

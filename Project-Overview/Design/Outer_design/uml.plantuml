@@ -1,0 +1,54 @@
+This file describes the uml of the entire python package.
+
+@startuml class UML
+
+''''''''''''''''''''''''''''''''''''''
+'''''' Defining all classes ''''''''''
+''''''''''''''''''''''''''''''''''''''
+' Main class (choose city also does the preprocessing / data_extraction)
+class Main_class {
+    Database data
+    Network network
+    
+    void __init(csv, geopackage)
+    Lst get_cities()
+    Bool choose_city(city)
+    
+    Dict Simulate_transit_dist_on_trans(fraction, dem_grps, vis_opt)
+    Lst[Dict] Simulate_transit_dist_on_trans_range(range, dem_grps, vis_opt, prog_opt)
+}
+
+' Wrapper class for the entire database. For database structure, see outer_design.
+' Data consists of the csv, geopackage, network nodes.
+class Database {
+    Duckdb connection
+    Network network
+
+    __init(csv, geopackage)
+    Lst get_cities()
+    load_network(name)
+
+}
+
+' Wrapper for interacting with the network. All information about the nodes is stored
+' in the database.
+class Network {
+    OSMnx graph
+    void __init()
+    Bool remove_edges(Lst)
+    Float shortest_dist(from, to)
+}
+
+' Gui is separate from the Main_class and uses this main class to run the Gui.
+protocol Gui
+
+''''''''''''''''''''''''''''''''''''''
+'''''' Defining relations ''''''''''''
+''''''''''''''''''''''''''''''''''''''
+Main_class::data --> Database : is
+Main_class::network --> Network : is
+Database::network --> Network : is
+
+Gui ..|> Main_class : uses
+
+@enduml
